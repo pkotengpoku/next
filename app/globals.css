@@ -58,3 +58,7 @@
   top: 80px;
   opacity: 0.15;
 }
+
+.kay_hover{
+  @apply hover:border-2 hover:border-blue-800
+}

@@ -6,17 +6,15 @@ export default function Home() {
   return (
     <main className="">
     <section className="relative h-96 overflow-hidden">
-      {/* Hero Image */}
       <img
         src="https://images.pexels.com/photos/1037992/pexels-photo-1037992.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
         alt="Hero Image"
         className="w-full h-full object-cover"
       />
 
-      {/* Overlay with Text and Buttons */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center w-full">
-        <h1 className="text-4xl font-bold mb-4">Your Hero Heading</h1>
-        <p className="text-lg mb-8">A brief description of your hero section.</p>
+        <h1 className="text-4xl font-bold mb-4">This is my header</h1>
+        <p className="text-lg mb-8">And some description will go heree</p>
         
         {/* Buttons */}
         <div className="flex space-x-4">

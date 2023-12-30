@@ -1,34 +1,107 @@
-import QuizCard from "@components/QuizCard"
+"use client";
+import React, { useEffect, useState } from "react";
+import quizData from "@data/data";
+import Link from 'next/link'
 
-const quiz = () => {
+const Page = () => {
+  const [questionNumber, setQuestionNumber] = useState(0);
+  const [allAnswers, setAllAnswers] = useState(new Array(quizData.length).fill("unanswered"));
+  const rightArrowHtmlEntity = "&#9654;";
+  const backArrowHtmlEntity = "&larr;";
+
+  useEffect(() => {
+    // This block of code will be executed after allAnswers has been updated
+  }, [allAnswers]);
+  
+  const handleSelect = (index) => {
+    setAllAnswers((prevAllAnswers) => {
+      const updatedAnswers = [...prevAllAnswers];
+      updatedAnswers[questionNumber] = quizData[questionNumber].options[index];
+      return updatedAnswers;
+    });
+  
+  };
+const handlePrev = ()=>{
+    if (questionNumber >0){
+      setQuestionNumber(questionNumber-1)
+    } else {null}
+  }
+  const handleNext = ()=>{
+    if (questionNumber <quizData.length-1){
+      setQuestionNumber(questionNumber+1)
+    } else {null}
+
+  }
+
+  const capitalLetters = Array.from({ length: 26 }, (_, i) =>
+    String.fromCharCode("A".charCodeAt(0) + i)
+  );
+
   return (
-    <div>
-      <h1 className="mt-5 text-5xl font-extrabold leading-[1.15] text-black sm:text-6xl  text-center">
-    There Is Nothing Here
-    <br className="max-md:hidden"/>
-    <span className="bg-gradient-to-r from-amber-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent text-center">Learn and Quiz</span>
-</h1>
-      <QuizCard/>
-      <p>And here is even More</p>
-      <div className="flex">
-      <QuizCard/>
-      <QuizCard/>
-      <QuizCard/>
-      </div>
-      <div className="relative mt-5 mb-10">
-  <img
-    src="https://images.pexels.com/photos/270637/pexels-photo-270637.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    className="w-96 h-80 ml-5"
-    alt=""
-  />
-  <div className="absolute top-0 left-0 h-80 bg-gradient-to-t from-blue-300 via-blue-50 to-transparent ml-5 mb-10 w-96 opacity-85">
-    {/* Content of the absolutely positioned div */}
-  </div>
+    <div className="mt-9">
+<div>
+{quizData && (
+        <div className=" mx-8 mt-6">
+          <div className="">
+          <h1 className="text-lg text-slate-700 mb-3">Question {questionNumber + 1} of {quizData.length}</h1>
+          <p className="text-xl">{quizData[questionNumber].question}</p>
+          </div>
+          <br />
+          {quizData[questionNumber].options.map((option, index) => (
+            <div key={index} className="flex items-center gap-2">
+              {capitalLetters[index]}{". "}
+              <div
+                onClick={()=>handleSelect(index)}
+                className={`rounded shadow-md p-1 min-w-32 w-fit border mt-2 kay_hover ${
+                  quizData[questionNumber].options[index] === allAnswers[questionNumber]
+                    ? "border-2 border-blue-800"
+                    : "border-slate-400"
+                }`}
+              >
+                {" "}
+                {option}
+              </div>
+            </div>
+          ))}
+
+          <div className="flex justify-between mx-6 mt-24">
+            <button
+              className="border rounded flex border-black w-28 p-2 select-none cursor-pointer"
+              onClick={handlePrev}
+            >
+              {" "}
+              <span
+                dangerouslySetInnerHTML={{ __html: backArrowHtmlEntity }}
+              />{" "}
+              Previous
+              {/* You can add additional styling if needed */}
+            </button>
+            <button
+              className="border rounded border-black w-28 flex text-center justify-center select-none cursor-pointer"
+              onClick={()=>{handleNext()}}
+            >
+              Next{" "}
+              <span
+                dangerouslySetInnerHTML={{ __html: rightArrowHtmlEntity }}
+              />
+              {/* You can add additional styling if needed */}
+            </button>
+          </div>
+        </div>
+      )}
 </div>
-
-
+      <div className="mt-24 flex justify-center">
+      <Link href= '/' className="border border-black rounded-full justify-center bg-black text-white p-3">
+        Return to Home
+      </Link>
+      </div>
+      <div className="mt-24 flex justify-center">
+      <Link href= '/quiz/hidden' className="border border-black rounded-full justify-center p-3">
+        See some secret page
+      </Link>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default quiz
+export default Page;
