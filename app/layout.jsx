@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { ClerkProvider } from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
     <html lang='eng'>
       
     <body>
+      <ClerkProvider>
         <div className='main'>
             <div className="gradient"/>
         </div>
@@ -20,6 +22,7 @@ export default function RootLayout({ children }) {
             <main className='app relative z-20'>
                 {children}
             </main>
+</ClerkProvider>
     </body>
 </html>
   )
