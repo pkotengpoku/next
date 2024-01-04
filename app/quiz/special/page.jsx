@@ -1,77 +1,76 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import quizData from "@data/data";
+import quizData from "@data/datasec"
 import Link from 'next/link'
 import { UserButton } from "@clerk/nextjs";
 
 const Page = () => {
     const [questionNumber, setQuestionNumber] = useState(0);
     const [allAnswers, setAllAnswers] = useState(new Array(quizData.length).fill("unanswered"));
-    const rightArrowHtmlEntity = "&#9654;";
+    const rightArrowHtmlEntity = "&rarr;";
     const backArrowHtmlEntity = "&larr;";
     const [finished, setFinished] = useState(false);
-    
     const [timer, setTimer] = useState(180); // 3 minutes in seconds
     const [isRed, setIsRed] = useState(false);
-    let myMarks = []
+    let myMarks = [];
+  
     useEffect(() => {
       const interval = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
   
-        // Check if it's time to turn the timer red (30 seconds left)
         if (timer <= 30) {
           setIsRed(true);
         }
   
-        // Check if the timer reached 0, then reset and move to the next question
         if (timer === 0) {
-          setIsRed(false); // Reset color
-          // Your logic to move to the next question goes here
-            handleNext()
-          // For example, you might call a function to handle the next question:
-          // handleNextQuestion();
-          // Reset the timer for the next question
-          setTimer(180); // Reset to 3 minutes
+          setIsRed(false);
+          handleNext();
+          setTimer(180);
         }
-        if (questionNumber == quizData.length-1){clearInterval(interval)}
+        
+        if (questionNumber === quizData.length - 1) {
+          clearInterval(interval);
+        }
       }, 1000);
   
-      // Clear interval on component unmount
       return () => clearInterval(interval);
     }, [timer]);
   
+    const handleSelect = (index) => {
+      setAllAnswers((prevAllAnswers) => {
+        const updatedAnswers = [...prevAllAnswers];
+        updatedAnswers[questionNumber] = quizData[questionNumber].options[index];
+        return updatedAnswers;
+      });
+    };
   
-  const handleSelect = (index) => {
-    setAllAnswers((prevAllAnswers) => {
-      const updatedAnswers = [...prevAllAnswers];
-      updatedAnswers[questionNumber] = quizData[questionNumber].options[index];
-      return updatedAnswers;
-    });
+    const handlePrev = () => {
+      if (questionNumber > 0) {
+        setQuestionNumber(questionNumber - 1);
+      }
+    };
   
-  };
-const handlePrev = ()=>{
-    if (questionNumber >0){
-      setQuestionNumber(questionNumber-1)
-    } else {null}
-  }
-  const handleNext = ()=>{
-    if (questionNumber <quizData.length-1){
-      setQuestionNumber(questionNumber+1)
-    }
-  }
-  const handleFinish = ()=>{
-      quizData.map((ques,index)=>{
-          myMarks.push(allAnswers[index]==ques.correctAnswer)
-        })
-        console.log(myMarks);
-        console.log(myMarks.length);
-        console.log(allAnswers.length);
-        setFinished(true)
-  }
-
-  const capitalLetters = Array.from({ length: 26 }, (_, i) =>
-    String.fromCharCode("A".charCodeAt(0) + i)
-  );
+    const handleNext = () => {
+      if (questionNumber < quizData.length - 1) {
+        setQuestionNumber(questionNumber + 1);
+      }
+    };
+  
+    const handleFinish = () => {
+      quizData.forEach((ques, index) => {
+        myMarks.push(allAnswers[index] === ques.correctAnswer);
+      });
+  
+      console.log(myMarks);
+      console.log(myMarks.length);
+      console.log(allAnswers.length);
+  
+      setFinished(true);
+    };
+  
+    const capitalLetters = Array.from({ length: 26 }, (_, i) =>
+      String.fromCharCode("A".charCodeAt(0) + i)
+    );
 
   return (
     <div className="mt-9">
@@ -82,22 +81,33 @@ const handlePrev = ()=>{
       <div className={`bg-red-300 ${!finished ? "hidden" : "flex"} h-20`}>
   Click Finish again to Submit Quiz <br />
 </div>
-{finished? (
-    <div>
-    {allAnswers.map((mark,index)=>(
-        
-        <div className="flex h-14 mt-4 ml-10 " key={index}>
-           <h3>Question</h3> {index+1} <div className={` bg-slate-200 ml-8 p-1 min-w-40 rounded-md border-4 ${mark==quizData[index].correctAnswer?" border-lime-500":" border-red-500"}`}>{mark.toString()}</div>
+{finished ? (
+        <div>
+          {allAnswers.map((mark, index) => (
+            <div className="flex h-14 mt-4 ml-10 " key={index}>
+              <h3>Question</h3> {index + 1}{" "}
+              <div
+                className={`bg-slate-200 ml-8 p-1 min-w-40 rounded-md border-4 ${
+                  mark === quizData[index].correctAnswer
+                    ? "border-lime-500"
+                    : "border-red-500"
+                }`}
+              >
+                {mark.toString()}
+              </div>
+            </div>
+          ))}
         </div>
-    ))}
-</div>):
-<div>
-{quizData && (
-        <div className=" mx-8 mt-6">
-          <div className="">
-          <h1 className="text-lg text-slate-700 mb-3">Question {questionNumber + 1} of {quizData.length}</h1>
-          <p className="text-xl">{quizData[questionNumber].question}</p>
-          </div>
+      ) : (
+        <div>
+          {quizData && (
+            <div className="mx-8 mt-6">
+              <div className="">
+                <h1 className="text-lg text-slate-700 mb-3">
+                  Question {questionNumber + 1} of {quizData.length}
+                </h1>
+                <p className="text-xl">{quizData[questionNumber].question}</p>
+              </div>
           <br />
           {quizData[questionNumber].options.map((option, index) => (
             <div key={index} className="flex items-center gap-2">
@@ -152,7 +162,7 @@ const handlePrev = ()=>{
     </div>
         </div>
       )}
-</div>
+</div>)
 }
       <div className="mt-24 flex justify-center">
       <Link href= '/' className="border border-black rounded-full justify-center bg-black text-white p-3">
